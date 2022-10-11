@@ -11,7 +11,6 @@ object dependencies {
     "com.disneystreaming" %% "weaver-cats" % "0.7.11" ,
     "com.disneystreaming" %% "weaver-discipline" % "0.7.11" ,
     "com.disneystreaming" %% "weaver-scalacheck" % "0.7.11" ,
-    "org.typelevel" %% "cats-laws" % "2.7.0" ,
-    "org.typelevel" %% "kittens" % "2.3.2" ,
+    "org.typelevel" %% "cats-laws" % "2.7.0" 
   ).map(_ % Test)
 }

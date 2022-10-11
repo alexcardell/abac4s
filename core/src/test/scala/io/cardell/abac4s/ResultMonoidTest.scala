@@ -2,7 +2,6 @@ package io.cardell.abac4s
 
 import _root_.io.cardell.abac4s.model._
 import _root_.io.cardell.abac4s.rules._
-import cats.derived._
 import cats.kernel.laws.discipline.MonoidTests
 import cats.kernel.laws.discipline.SemigroupTests
 import cats.laws.discipline._

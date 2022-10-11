@@ -8,13 +8,14 @@ trait not {
     def invert(rule: R): Rule
   }
 
-  implicit final val attributeMustMatchInvertible =
-    new Invertible[AttributeMustMatch] {
-      def invert(rule: AttributeMustMatch): Rule =
-        AttributeMustNotMatch(rule.key, rule.expected)
-    }
+  implicit final val attributeMustMatchInvertible
+      : Invertible[AttributeMustMatch] = new Invertible[AttributeMustMatch] {
+    def invert(rule: AttributeMustMatch): Rule =
+      AttributeMustNotMatch(rule.key, rule.expected)
+  }
 
-  implicit final val attributeMustNotMatchInvertible =
+  implicit final val attributeMustNotMatchInvertible
+      : Invertible[AttributeMustNotMatch] =
     new Invertible[AttributeMustNotMatch] {
       def invert(rule: AttributeMustNotMatch): Rule =
         AttributeMustMatch(rule.key, rule.expected)
