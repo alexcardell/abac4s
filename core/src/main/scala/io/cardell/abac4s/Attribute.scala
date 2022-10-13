@@ -5,7 +5,12 @@ sealed trait Attribute {
   val value: V
 }
 
-case class Subject(key: K, value: V)  extends Attribute
-case class Resource(key: K, value: V) extends Attribute
-case class Action(key: K, value: V)   extends Attribute
-case class Context(key: K, value: V)  extends Attribute
+object Attribute {
+  type Key = String
+  type Value = String
+
+  case class Subject(key: K, value: V) extends Attribute
+  case class Resource(key: K, value: V) extends Attribute
+  case class Action(key: K, value: V) extends Attribute
+  case class Context(key: K, value: V) extends Attribute
+}

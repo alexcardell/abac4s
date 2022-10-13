@@ -1,4 +1,7 @@
 package io.cardell.abac4s
 
 sealed trait Denial
-case class MiscDenial() extends Denial
+object Denial {
+  case class AttributeMissing() extends Denial
+  case class AttributeMismatch() extends Denial
+}

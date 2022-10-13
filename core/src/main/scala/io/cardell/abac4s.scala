@@ -5,14 +5,15 @@ import cats.data.Validated
 import cats.data.ValidatedNec
 
 package object abac4s {
-  type K = String
-  type V = String
+  type K = Attribute.Key
+  type V = Attribute.Value
 
   type PolicyResult[A] = ValidatedNec[Denial, A]
-  type PolicyCheck     = PolicyResult[Unit]
+  type PolicyCheck = PolicyResult[Unit]
 
   object PolicyResult {
-    val Granted: PolicyCheck = Validated.validNec(())
+    def Granted[A](a: A): PolicyResult[A] = Validated.validNec(a)
+    val Granted: PolicyCheck = Granted(())
     def Denied[A](nec: NonEmptyChain[Denial]): PolicyResult[A] = Validated
       .invalid(nec)
     def Denied[A](denial: Denial): PolicyResult[A] = Validated

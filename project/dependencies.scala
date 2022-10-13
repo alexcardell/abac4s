@@ -8,9 +8,9 @@ object dependencies {
   )
 
   lazy val testDeps = Seq(
-    "com.disneystreaming" %% "weaver-cats" % "0.7.11" ,
-    "com.disneystreaming" %% "weaver-discipline" % "0.7.11" ,
-    "com.disneystreaming" %% "weaver-scalacheck" % "0.7.11" ,
+    "com.disneystreaming" %% "weaver-cats" % "0.8.0" ,
+    "com.disneystreaming" %% "weaver-discipline" % "0.8.0",
+    "com.disneystreaming" %% "weaver-scalacheck" % "0.8.0",
     "org.typelevel" %% "cats-laws" % "2.7.0" 
   ).map(_ % Test)
 }
