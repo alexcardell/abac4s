@@ -29,7 +29,7 @@ lazy val scala2_12 = "2.12.15"
 lazy val scala2_13 = "2.13.8"
 lazy val scala3_1 = "3.1.3"
 lazy val scala3_2 = "3.2.0"
-lazy val crossVersions = Seq(scala2_12, scala2_13)
+lazy val crossVersions = Seq(scala2_13)
 ThisBuild / crossScalaVersions := crossVersions
 ThisBuild / scalaVersion := scala2_13
 
