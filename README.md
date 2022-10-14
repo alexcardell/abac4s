@@ -1,5 +1,7 @@
 # abac4s
 
+[![Build Status](https://github.com/alexcardell/abac4s/workflows/release/badge.svg)](https://github.com/alexcardell/abac4s/actions?query=workflow%3Arelease)
+
 Access Based Access Control for Scala.
 
 Provides composable attribute rules to build policies,

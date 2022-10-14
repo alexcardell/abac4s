@@ -1,22 +1,41 @@
 import dependencies._
 
+ThisBuild / organization := "io.cardell"
+ThisBuild / name := "abac4s"
+ThisBuild / scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/alexcardell/abac4s"),
+    "scm:git@github.com:alexcardell/abac4s.git"
+  )
+)
+ThisBuild / licenses := List(
+  "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")
+)
+ThisBuild / developers := List(
+  Developer(
+    "alexcardell",
+    "Alex Cardell",
+    "29524087+alexcardell@users.noreply.github.com",
+    url("https://github.com/alexcardell")
+  )
+)
+ThisBuild / homepage := Some(
+  url("https://github.com/alexcardell/abac4s")
+)
+ThisBuild / publishTo := sonatypePublishToBundle.value
+ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
+
 lazy val scala2_12 = "2.12.15"
 lazy val scala2_13 = "2.13.8"
 lazy val scala3_1 = "3.1.3"
 lazy val scala3_2 = "3.2.0"
-
-/* lazy val crossVersions = Seq(scala2_12, scala2_13, scala3_1, scala3_2) */
 lazy val crossVersions = Seq(scala2_12, scala2_13)
-
-ThisBuild / organization := "io.cardell"
-ThisBuild / version := "0.0.1-SNAPSHOT"
+ThisBuild / crossScalaVersions := crossVersions
 ThisBuild / scalaVersion := scala2_13
 
-ThisBuild / crossScalaVersions := crossVersions
-
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0"
-ThisBuild /  semanticdbEnabled := true
-ThisBuild /  semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 lazy val commonSettings = Seq(
   addCompilerPlugin(
@@ -30,8 +49,7 @@ lazy val root = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .in(file("."))
   .aggregate(core)
   .settings(
-    moduleName := "abac4s",
-    name := "abac4s"
+    moduleName := "abac4s"
   )
 
 lazy val core = crossProject(JVMPlatform, JSPlatform, NativePlatform)
@@ -44,6 +62,3 @@ lazy val core = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     libraryDependencies ++= mainDeps ++ testDeps,
     testFrameworks += new TestFramework("weaver.framework.CatsEffect")
   )
-
-ThisBuild / credentials +=
-  Credentials("GnuPG Key ID", "gpg", "0x24D44BD082D48FBE", "")
