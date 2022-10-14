@@ -17,12 +17,13 @@ jobs:
         uses: crazy-max/ghaction-import-gpg@v5
         with:
           gpg_private_key: ${{ secrets.PGP_SECRET }}
+          passphrase: ${{ secrets.PGP_PASSPHRASE }}
       - uses: actions/cache@v2
         with:
           path: |
             ~/.sbt
             ~/.coursier
-          key: ${{ runner.os }}-sbt-${{ hashfiles('**/build.sbt') }}
+          key: ${{ runner.os }}-sbt-${{ hashfiles('**/build.sbt', '**/project/*.scala', '**/project/*.sbt') }}
       - run: sbt +test ciReleaseTagNextVersion ciReleaseSonatype
         env:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
