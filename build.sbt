@@ -63,3 +63,13 @@ lazy val core = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     libraryDependencies ++= mainDeps ++ testDeps,
     testFrameworks += new TestFramework("weaver.framework.CatsEffect")
   )
+
+lazy val docs = project
+  .in(file("mdoc-src"))
+  .dependsOn(core.jvm)
+  .settings(
+    mdocVariables := Map(
+      "VERSION" -> version.value
+    )
+  )
+  .enablePlugins(MdocPlugin)
