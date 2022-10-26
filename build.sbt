@@ -72,6 +72,9 @@ lazy val docs = project
   .in(file("mdoc-src"))
   .dependsOn(core.jvm)
   .settings(
+    libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.3.14"
+  )
+  .settings(
     mdocVariables := Map(
       "VERSION" -> version.value
     )
