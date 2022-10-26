@@ -1,5 +1,3 @@
-import dependencies._
-
 ThisBuild / organization := "io.cardell"
 ThisBuild / name := "abac4s"
 ThisBuild / scmInfo := Some(
