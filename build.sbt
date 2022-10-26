@@ -53,16 +53,20 @@ lazy val root = crossProject(JVMPlatform, JSPlatform, NativePlatform)
     name := "abac4s"
   )
 
+lazy val deps = Seq(
+  libraryDependencies ++= Seq(
+    "org.typelevel" %%% "cats-core" % "2.7.0",
+    "com.disneystreaming" %%% "weaver-cats" % "0.8.0" % Test
+  )
+)
+
 lazy val core = crossProject(JVMPlatform, JSPlatform, NativePlatform)
   .crossType(CrossType.Pure)
   .in(file("core"))
   .settings(commonSettings)
+  .settings(deps: _*)
   .settings(
     moduleName := "abac4s-core",
-    libraryDependencies ++= Seq(
-      "org.typelevel" %%% "cats-core" % "2.7.0",
-      "com.disneystreaming" %%% "weaver-cats" % "0.8.0" % Test
-    ),
     testFrameworks += new TestFramework("weaver.framework.CatsEffect")
   )
 
