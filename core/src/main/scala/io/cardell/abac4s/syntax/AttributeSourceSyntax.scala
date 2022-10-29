@@ -37,7 +37,7 @@ final class SourceHasKeyOps[F[_]: Monad, A, S <: Attribute](
       val keyExists = as.attributes(source).exists(_.key == key)
 
       if (keyExists) Granted.as(source).pure[F]
-      else Denied(AttributeMissing()).pure[F]
+      else Denied(AttributeMissing(key)).pure[F]
     }
   }
 
@@ -54,9 +54,9 @@ final class SourceContainsOps[F[_]: Monad, A, S <: Attribute](
         val maybeAttribute = as.attributes(source).find(_.key == key)
 
         maybeAttribute match {
-          case None                              => Denied(AttributeMissing())
+          case None => Denied(AttributeMissing(key))
           case Some(attr) if attr.value == value => Granted.as(source)
-          case Some(_)                           => Denied(AttributeMismatch())
+          case Some(attr) => Denied(AttributeMismatch(key, attr.value, value))
         }
       }
     }
@@ -79,11 +79,12 @@ final class SourceMatchesOps[F[_]: Monad, R, S <: Attribute](
           attr1 = first.attributes(source1).find(_.key == key)
           attr2 = second.attributes(source2).find(_.key == key)
           res = (attr1, attr2) match {
-            case (None, _) => Denied(AttributeMissing())
-            case (_, None) => Denied(AttributeMissing())
+            case (None, _) => Denied(AttributeMissing(key))
+            case (_, None) => Denied(AttributeMissing(key))
             case (Some(l), Some(r)) if (l.value == r.value) =>
               Granted((source1, source2))
-            case (Some(_), Some(_)) => Denied(AttributeMismatch())
+            case (Some(l), Some(r)) =>
+              Denied(AttributeMismatch(key, l.value, r.value))
           }
         } yield res
       }

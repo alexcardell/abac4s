@@ -14,8 +14,8 @@ object TestPolicies {
     def run(): IO[PolicyResult[A]] = IO.pure(Granted(a))
   }
 
-  def deny[A]() = new Policy[IO, A] {
-    def run(): IO[PolicyResult[A]] = IO.pure(Denied(AttributeMissing()))
+  def deny[A](key: K) = new Policy[IO, A] {
+    def run(): IO[PolicyResult[A]] = IO.pure(Denied(AttributeMissing(key)))
   }
 }
 
@@ -33,25 +33,26 @@ object PolicySyntaxSuite extends SimpleIOSuite {
   }
 
   test("grant and denial denies") { _ =>
-    val policy = grant(unit).and(deny())
+    val policy = grant(unit).and(deny("key"))
 
-    val expected = Denied(AttributeMissing())
+    val expected = Denied(AttributeMissing("key"))
 
     for { result <- policy.run() } yield expect(result == expected)
   }
 
   test("denial and grant denies") { _ =>
-    val policy = deny().and(grant(3))
+    val policy = deny("key").and(grant(3))
 
-    val expected = Denied(AttributeMissing())
+    val expected = Denied(AttributeMissing("key"))
 
     for { result <- policy.run() } yield expect(result == expected)
   }
 
   test("denial and denial denies") { _ =>
-    val policy = deny().and(deny())
+    val policy = deny("key1").and(deny("key2"))
 
-    val expected = Denied(NonEmptyChain(AttributeMissing(), AttributeMissing()))
+    val expected =
+      Denied(NonEmptyChain(AttributeMissing("key1"), AttributeMissing("key2")))
 
     for { result <- policy.run() } yield expect(result == expected)
   }
