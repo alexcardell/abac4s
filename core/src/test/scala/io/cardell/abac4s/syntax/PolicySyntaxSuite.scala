@@ -10,12 +10,12 @@ import io.cardell.abac4s.PolicyResult.Granted
 import io.cardell.abac4s._
 
 object TestPolicies {
-  def grant[A](a: A) = new Policy[IO, A] {
-    def run(): IO[PolicyResult[A]] = IO.pure(Granted(a))
+  def grant[A](a: A) = Policy[IO, A] {
+    IO.pure(Granted(a))
   }
 
-  def deny[A](key: K) = new Policy[IO, A] {
-    def run(): IO[PolicyResult[A]] = IO.pure(Denied(AttributeMissing(key)))
+  def deny[A](key: K) = Policy[IO, A] {
+    IO.pure(Denied(AttributeMissing(key)))
   }
 }
 
