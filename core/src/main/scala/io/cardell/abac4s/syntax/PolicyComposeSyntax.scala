@@ -15,6 +15,6 @@ final class PolicyAndOps[F[_]: Monad, A](policy: Policy[F, A]) {
   def and[B](other: Policy[F, B]): Policy[F, (A, B)] =
     Policy.and(policy, other)
 
-  def and_(other: Policy[F, A]): Policy[F, A] =
+  def and_[B](other: Policy[F, B]): Policy[F, A] =
     Policy.and_(policy, other)
 }
