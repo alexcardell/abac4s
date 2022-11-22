@@ -1,15 +1,16 @@
 package io.cardell.abac4s.syntax
 
-import cats.Monad
+import cats.Functor
 import cats.implicits._
 
 import io.cardell.abac4s.Policy
-import cats.Functor
 
 trait PolicySyntax {
-  implicit def policyAndSyntax[F[_]: Monad, A](
+
+  implicit def policySyntax[F[_]: Functor, A](
       policy: Policy[F, A]
   ): PolicyOps[F, A] = new PolicyOps[F, A](policy)
+
 }
 
 final class PolicyOps[F[_]: Functor, A](policy: Policy[F, A]) {
