@@ -30,9 +30,9 @@ object Policy {
 
     }
 
-  def and_[F[_]: Applicative, A](
+  def and_[F[_]: Applicative, A, B](
       policy: Policy[F, A],
-      other: Policy[F, A]
+      other: Policy[F, B]
   ): Policy[F, A] =
     new Policy[F, A] {
 
@@ -51,7 +51,7 @@ object Policy {
     new Policy[F, A] {
 
       def run(): F[PolicyResult[A]] = {
-        policies.reduce(and_[F, A]).run()
+        policies.reduce(and_[F, A, A]).run()
       }
 
     }
