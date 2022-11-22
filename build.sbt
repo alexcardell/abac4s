@@ -75,6 +75,7 @@ lazy val docs = project
     libraryDependencies += "org.typelevel" %%% "cats-effect" % "3.3.14"
   )
   .settings(
+    moduleName := "abac4s-docs",
     mdocVariables := Map(
       "VERSION" -> version.value
     )
