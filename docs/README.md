@@ -1,6 +1,7 @@
 # abac4s
 
 [![release](https://github.com/alexcardell/abac4s/actions/workflows/ci.yaml/badge.svg)](https://github.com/alexcardell/abac4s/actions/workflows/ci.yaml)
+[![version](https://img.shields.io/maven-central/v/io.cardell/abac4s_2.13)](https://search.maven.org/artifact/io.cardell/abac4s_2.13)
 
 Access Based Access Control for Scala.
 
