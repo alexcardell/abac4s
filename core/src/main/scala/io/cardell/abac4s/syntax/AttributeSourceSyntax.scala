@@ -36,7 +36,7 @@ final class SourceHasKeyOps[F[_]: Monad, A, S <: Attribute](
     def run(): F[PolicyResult[A]] = as.source.flatMap { source =>
       val keyExists = as.attributes(source).exists(_.key == key)
 
-      if (keyExists) Granted.as(source).pure[F]
+      if (keyExists) Granted().as(source).pure[F]
       else Denied(AttributeMissing(key)).pure[F]
     }
   }
@@ -55,7 +55,7 @@ final class SourceContainsOps[F[_]: Monad, A, S <: Attribute](
 
         maybeAttribute match {
           case None => Denied(AttributeMissing(key))
-          case Some(attr) if attr.value == value => Granted.as(source)
+          case Some(attr) if attr.value == value => Granted().as(source)
           case Some(attr) => Denied(AttributeMismatch(key, attr.value, value))
         }
       }

@@ -56,4 +56,35 @@ object PolicySyntaxSuite extends SimpleIOSuite {
 
     for { result <- policy.run() } yield expect(result == expected)
   }
+
+  test("Policy.all with all grants passes") { _ =>
+    val policies = List(
+      grant("key1"),
+      grant("key2"),
+      grant("key3")
+    )
+
+    val expected =
+      Granted("key1")
+
+    val policy = Policy.all_(policies)
+
+    for { r <- policy.run() } yield expect(r == expected)
+
+  }
+
+  test("Policy.all with one denial denies") { _ =>
+    val policies = List(
+      grant("key1"),
+      grant("key2"),
+      deny[String]("key3")
+    )
+
+    val expected = Denied(NonEmptyChain(AttributeMissing("key3")))
+
+    val policy = Policy.all_(policies)
+
+    for { r <- policy.run() } yield expect(r == expected)
+
+  }
 }
