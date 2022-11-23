@@ -38,7 +38,7 @@ object SourceSyntaxSuite extends SimpleIOSuite {
   test("given no key, `resource hasKey` fails") {
     val resourcePolicy = attributeSource.hasKey(missingKey)
 
-    val expected = PolicyResult.Denied(Denial.AttributeMissing(missingKey))
+    val expected = PolicyResult.Denied(Denial.AttributeKeyMissing(missingKey))
 
     for { result <- resourcePolicy.run() } yield expect(result == expected)
   }
@@ -51,12 +51,12 @@ object SourceSyntaxSuite extends SimpleIOSuite {
     for { result <- resourcePolicy.run() } yield expect(result == expected)
   }
 
-  test("given no key, `resource contains` fails with AttributeMissing") {
+  test("given no key, `resource contains` fails with AttributeKeyMissing") {
     val resourcePolicy = attributeSource.contains(actualKey, incorrectValue)
 
     val expected =
       PolicyResult.Denied(
-        Denial.AttributeMismatch(actualKey, actualValue, incorrectValue)
+        Denial.AttributeMismatch(actualKey, incorrectValue, List(actualValue))
       )
 
     for { result <- resourcePolicy.run() } yield expect(result == expected)
@@ -67,7 +67,7 @@ object SourceSyntaxSuite extends SimpleIOSuite {
   ) {
     val resourcePolicy = attributeSource.contains(missingKey, actualValue)
 
-    val expected = PolicyResult.Denied(Denial.AttributeMissing(missingKey))
+    val expected = PolicyResult.Denied(Denial.AttributeKeyMissing(missingKey))
 
     for { result <- resourcePolicy.run() } yield expect(result == expected)
   }
