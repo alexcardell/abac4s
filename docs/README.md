@@ -51,7 +51,12 @@ val combinedResult: IO[PolicyResult[(Token, MyResource)]] =
 
 // matching
 // checks the two attribute sources share the same value for a key
-val matchPolicy = (subjectSource matches resourceSource).onKey("key")
+// `intersect` means that in case of multiple keys, any intersection of values
+// passes the policy
+val matchPolicy = (subjectSource matches resourceSource).intersect.onKey("key")
+// `unique` means both sources must have a single attribute for that key, and
+// they must match
+val matchPolicy2 = (subjectSource matches resourceSource).unique.onKey("key")
 
 val matchPolicyResult: IO[PolicyResult[(Token, MyResource)]] = matchPolicy.run()
 ```
