@@ -71,4 +71,51 @@ object SourceSyntaxSuite extends SimpleIOSuite {
 
     for { result <- resourcePolicy.run() } yield expect(result == expected)
   }
+
+  test(
+    "given multiple instances of a key, including the expected value, `resource contains` passes"
+  ) {
+    val newValue = "secondValue"
+    val newAttr = Resource(actualKey, newValue)
+
+    val makeAttributes =
+      (ex: ExampleResource) => ExampleResource.toAttributes(ex) ++ Set(newAttr)
+
+    val attributeSource =
+      resource[IO, ExampleResource](makeAttributes)(IO.pure(exResource))
+
+    val resourcePolicy = attributeSource.contains(actualKey, newValue)
+
+    val expected = PolicyResult.Granted(exResource)
+
+    for { result <- resourcePolicy.run() } yield expect(result == expected)
+  }
+
+  test(
+    "given multiple instances of a key, but not the expected value, `resource contains` passes"
+  ) {
+    val newValue = "secondValue"
+    val newAttr = Resource(actualKey, newValue)
+
+    val makeAttributes =
+      (ex: ExampleResource) => ExampleResource.toAttributes(ex) ++ Set(newAttr)
+
+    val attributeSource =
+      resource[IO, ExampleResource](makeAttributes)(IO.pure(exResource))
+
+    val expectedAttributeValue = "thirdValue"
+
+    val resourcePolicy =
+      attributeSource.contains(actualKey, expectedAttributeValue)
+
+    val expected = PolicyResult.Denied(
+      Denial.AttributeMismatch(
+        actualKey,
+        expectedAttributeValue,
+        Set(actualValue, newValue).toList
+      )
+    )
+
+    for { result <- resourcePolicy.run() } yield expect(result == expected)
+  }
 }
