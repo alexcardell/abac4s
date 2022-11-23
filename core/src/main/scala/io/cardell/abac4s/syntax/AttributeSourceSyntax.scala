@@ -7,6 +7,8 @@ import io.cardell.abac4s.Attribute
 import io.cardell.abac4s.AttributeSource
 import io.cardell.abac4s.Denial.AttributeKeyMissing
 import io.cardell.abac4s.Denial.AttributeMismatch
+import io.cardell.abac4s.Denial.AttributeNoIntersection
+import io.cardell.abac4s.Denial.AttributeNotUnique
 import io.cardell.abac4s.K
 import io.cardell.abac4s.Policy
 import io.cardell.abac4s.PolicyResult.Denied
@@ -68,28 +70,68 @@ final class SourceContainsOps[F[_]: Monad, A, S <: Attribute](
 
 }
 
+trait Matcher[F[_], A] {
+  def onKey(key: K): Policy[F, A]
+}
+
 final class SourceMatchesOps[F[_]: Monad, R, S <: Attribute](
     first: AttributeSource[F, R, S]
 ) {
 
   def matches[R2, S2 <: Attribute](second: AttributeSource[F, R2, S2]) = new {
 
-    def onKey(key: K): Policy[F, (R, R2)] = Policy {
+    def intersect = new Matcher[F, (R, R2)] {
 
-      for {
-        source1 <- first.source
-        source2 <- second.source
-        attr1 = first.attributes(source1).find(_.key == key)
-        attr2 = second.attributes(source2).find(_.key == key)
-        res = (attr1, attr2) match {
-          case (None, _) => Denied(AttributeKeyMissing(key))
-          case (_, None) => Denied(AttributeKeyMissing(key))
-          case (Some(l), Some(r)) if (l.value == r.value) =>
-            Granted((source1, source2))
-          case (Some(l), Some(r)) =>
-            Denied(AttributeMismatch(key, l.value, r.value))
-        }
-      } yield res
+      def onKey(key: K): Policy[F, (R, R2)] = Policy {
+
+        for {
+          source1 <- first.source
+          source2 <- second.source
+
+          attr1 = first.attributes(source1).filter(_.key == key).map(_.value)
+          attr2 = second.attributes(source2).filter(_.key == key).map(_.value)
+
+          intersection = attr1.intersect(attr2)
+
+          res = (attr1.toList, attr2.toList, intersection.toList) match {
+            // TODO tag which side is missing
+            case (Nil, Nil, _)    => Denied(AttributeKeyMissing(key))
+            case (_ :: _, Nil, _) => Denied(AttributeKeyMissing(key))
+            case (Nil, _ :: _, _) => Denied(AttributeKeyMissing(key))
+            case (l1 @ _ :: _, l2 @ _ :: _, Nil) =>
+              Denied(AttributeNoIntersection(key, l1, l2))
+            case (_ :: _, _ :: _, _ :: _) =>
+              Granted((source1, source2))
+          }
+        } yield res
+      }
+    }
+
+    def unique = new Matcher[F, (R, R2)] {
+
+      def onKey(key: K): Policy[F, (R, R2)] = Policy {
+
+        for {
+          source1 <- first.source
+          source2 <- second.source
+
+          attr1 = first.attributes(source1).filter(_.key == key).map(_.value)
+          attr2 = second.attributes(source2).filter(_.key == key).map(_.value)
+          intersection = attr1.intersect(attr2)
+
+          res = (attr1.toList, attr2.toList, intersection.toList) match {
+            case (Nil, Nil, _)    => Denied(AttributeKeyMissing(key))
+            case (_ :: _, Nil, _) => Denied(AttributeKeyMissing(key))
+            case (Nil, _ :: _, _) => Denied(AttributeKeyMissing(key))
+            case (l1 @ _ :: _, l2 @ _ :: _, Nil) =>
+              Denied(AttributeNoIntersection(key, l1, l2))
+            case (_ :: Nil, _ :: Nil, _ :: Nil) =>
+              Granted((source1, source2))
+            case (l1 @ _ :: _, l2 @ _ :: _, _ :: _) =>
+              Denied(AttributeNotUnique(key, l1, l2))
+          }
+        } yield res
+      }
     }
 
   }

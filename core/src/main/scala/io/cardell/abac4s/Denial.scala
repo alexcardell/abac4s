@@ -15,4 +15,10 @@ object Denial {
         List(existing)
       )
   }
+
+  case class AttributeNoIntersection(key: K, left: List[V], right: List[V])
+      extends Denial
+
+  case class AttributeNotUnique(key: K, left: List[V], right: List[V])
+      extends Denial
 }
