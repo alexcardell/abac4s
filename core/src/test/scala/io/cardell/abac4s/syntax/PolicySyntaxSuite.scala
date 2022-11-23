@@ -4,7 +4,7 @@ import cats.data.NonEmptyChain
 import cats.effect.IO
 import weaver._
 
-import io.cardell.abac4s.Denial.AttributeMissing
+import io.cardell.abac4s.Denial.AttributeKeyMissing
 import io.cardell.abac4s.PolicyResult.Denied
 import io.cardell.abac4s.PolicyResult.Granted
 import io.cardell.abac4s._
@@ -15,7 +15,7 @@ object TestPolicies {
   }
 
   def deny[A](key: K) = Policy[IO, A] {
-    IO.pure(Denied(AttributeMissing(key)))
+    IO.pure(Denied(AttributeKeyMissing(key)))
   }
 }
 
@@ -35,7 +35,7 @@ object PolicySyntaxSuite extends SimpleIOSuite {
   test("grant and denial denies") { _ =>
     val policy = grant(unit).and(deny("key"))
 
-    val expected = Denied(AttributeMissing("key"))
+    val expected = Denied(AttributeKeyMissing("key"))
 
     for { result <- policy.run() } yield expect(result == expected)
   }
@@ -43,7 +43,7 @@ object PolicySyntaxSuite extends SimpleIOSuite {
   test("denial and grant denies") { _ =>
     val policy = deny("key").and(grant(3))
 
-    val expected = Denied(AttributeMissing("key"))
+    val expected = Denied(AttributeKeyMissing("key"))
 
     for { result <- policy.run() } yield expect(result == expected)
   }
@@ -52,7 +52,9 @@ object PolicySyntaxSuite extends SimpleIOSuite {
     val policy = deny("key1").and(deny("key2"))
 
     val expected =
-      Denied(NonEmptyChain(AttributeMissing("key1"), AttributeMissing("key2")))
+      Denied(
+        NonEmptyChain(AttributeKeyMissing("key1"), AttributeKeyMissing("key2"))
+      )
 
     for { result <- policy.run() } yield expect(result == expected)
   }
@@ -80,7 +82,7 @@ object PolicySyntaxSuite extends SimpleIOSuite {
       deny[String]("key3")
     )
 
-    val expected = Denied(NonEmptyChain(AttributeMissing("key3")))
+    val expected = Denied(NonEmptyChain(AttributeKeyMissing("key3")))
 
     val policy = Policy.all_(policies)
 
